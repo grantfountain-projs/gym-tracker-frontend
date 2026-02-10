@@ -1,0 +1,33 @@
+// src/api/auth.js
+
+const API_URL = 'http://localhost:3000';
+
+export const login = async (email, password) => {
+    const response = await fetch(API_URL + '/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+
+    if(!response.ok) {
+        throw new Error(data.message || 'Login failed');
+    }
+
+    return data;
+};
+
+export const register = async (email, password) => {
+    const response = await fetch(API_URL + '/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+
+    if(!response.ok) {
+        throw new Error(data.message || 'Registration failed');
+    }
+
+    return data;
+};
