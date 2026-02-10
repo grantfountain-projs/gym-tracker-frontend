@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function Login() {
+function Register() {
     // Get the login function and navigate
-    const { login } = useAuth();
+    const { register } = useAuth();
     const navigate = useNavigate();
   
     // Form state
@@ -16,7 +16,7 @@ function Login() {
         e.preventDefault();
         setError('');
         try {
-            await login(email, password);
+            await register(email, password);
             navigate('/dashboard');
         } catch (error) {
             setError(error.message);
@@ -35,7 +35,7 @@ function Login() {
       
             {/* Login Card */}
             <div className="bg-gray-800 rounded-lg shadow-xl p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Login</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">Register</h2>
       
               {/* Error message */}
               {error && (
@@ -74,14 +74,14 @@ function Login() {
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition duration-200"
         >
-            Login
+            Register
         </button>
 
-        {/* Link to Signup */}
+        {/* Link to Login */}
         <p className="text-gray-400 text-center mt-4">
-        Don't have an account?{' '}
-        <a href="/signup" className="text-red-600 hover:text-red-500">
-            Sign up
+        Already have an account?{' '}
+        <a href="/login" className="text-red-600 hover:text-red-500">
+            Login
         </a>
         </p>
 
@@ -92,4 +92,4 @@ function Login() {
     );
 }
   
-export default Login;
+export default Register;
