@@ -1,6 +1,6 @@
 // src/api/auth.js
 
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://gym-tracker-backend-production-a8e4.up.railway.app';
 
 export const login = async (email, password) => {
     const response = await fetch(API_URL + '/auth/login', {

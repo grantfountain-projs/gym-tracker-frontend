@@ -1,6 +1,6 @@
 // src/api/workouts.js
 
-const API_URL = 'http://localhost:3000';
+const API_URL = 'https://gym-tracker-backend-production-a8e4.up.railway.app';
 
 export const createWorkout = async (token) => {
     const response = await fetch(API_URL + '/workouts', {
