@@ -37,6 +37,8 @@ function ActiveWorkout() {
     const [editWeight, setEditWeight] = useState('');
     const [editRpe, setEditRpe] = useState(5);
 
+    const [showSummary, setShowSummary] = useState(false);
+
     // This hook gets the workout ID from the URL
     const { id } = useParams();
     const { user, token } = useAuth();
@@ -65,7 +67,7 @@ function ActiveWorkout() {
     }, []);
 
     useEffect(() => {
-        if (!workout) return;
+        if (!workout || workout.completed_at) return;  // Add completed_at check
         
         const interval = setInterval(() => {
             const currentTime = new Date();
@@ -143,7 +145,7 @@ function ActiveWorkout() {
             console.error(error);
         }
         
-    }
+    };
 
     const handleEditClick = (set) => {
         setEditingSetId(set.id);
@@ -163,7 +165,7 @@ function ActiveWorkout() {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
 
     const handleDeleteSet = async (setId) => {
         try {
@@ -172,7 +174,19 @@ function ActiveWorkout() {
         } catch (error) {
             console.error(error);
         }
-    }
+    };  
+
+
+    const handleEndWorkout = async () => {
+        try {
+            const completedAt = new Date().toISOString();
+            const endedWorkout = await updateWorkout(token, id, workout.notes, workout.date, completedAt);
+            setWorkout(endedWorkout.workout);
+            setShowSummary(true);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const filteredExercises = exercises.filter(exercise => exercise.name.toLowerCase().includes(searchInput.toLowerCase()))
     .sort((a, b) => {
@@ -188,6 +202,58 @@ function ActiveWorkout() {
         return (
             <div className="min-h-screen bg-black flex items-center justify-center">
                 <div className="text-white text-xl">Loading workout...</div>
+            </div>
+        );
+    }
+
+    if (showSummary) {
+        const uniqueMuscleGroups = [...new Set(pendingExercises.map(ex => ex.muscle_group))];
+        const uniqueExercises = [...new Set(sets.map(set => set.exercise_id))];
+        const totalSets = sets.length;
+        
+        return (
+            <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
+                {/* Workout Complete Header */}
+                <div className="text-center mb-8">
+                    <h1 className="text-4xl font-bold text-red-600 mb-2">Workout Complete!</h1>
+                    <p className="text-2xl text-white font-semibold">{workout?.notes || "Unnamed Workout"}</p>
+                </div>
+
+                {/* Stats Grid */}
+                <div className="w-full max-w-md bg-black rounded-lg border border-red-600 p-6 space-y-4">
+                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                        <span className="text-gray-400">Duration</span>
+                        <span className="text-white font-semibold text-xl">{formatTime(elapsedTime)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                        <span className="text-gray-400">Total Volume</span>
+                        <span className="text-white font-semibold text-xl">{totalVolume} lbs</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                        <span className="text-gray-400">Exercises</span>
+                        <span className="text-white font-semibold text-xl">{uniqueExercises.length}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                        <span className="text-gray-400">Total Sets</span>
+                        <span className="text-white font-semibold text-xl">{totalSets}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                        <span className="text-gray-400">Muscle Groups</span>
+                        <span className="text-white font-semibold text-xl">{uniqueMuscleGroups.join(', ')}</span>
+                    </div>
+                </div>
+
+                {/* Home Button */}
+                <button
+                    onClick={() => navigate('/dashboard')}
+                    className="mt-8 px-8 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-200"
+                >
+                    Back to Home
+                </button>
             </div>
         );
     }
@@ -294,7 +360,6 @@ function ActiveWorkout() {
                                 </div>
                             </div>
                         ) : (
-                            // SEARCH/LIST VIEW - paste your existing search, sort, list, and create button here
                             <>
                                 {/* Search input */}
                                 <input
@@ -503,6 +568,15 @@ function ActiveWorkout() {
                         )}
                     </div>
                 ))}
+            </div>
+            {/* End Workout Button */}
+            <div className="fixed bottom-4 left-4 right-4">
+                <button
+                    onClick={handleEndWorkout}
+                    className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-lg transition duration-200 border border-gray-600"
+                >
+                    End Workout
+                </button>
             </div>
         </div>
     );

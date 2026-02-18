@@ -34,14 +34,14 @@ export const getWorkoutById = async (token, workout_id) => {
     return workoutData;
 };
 
-export const updateWorkout = async (token, workout_id, notes, date) => {
+export const updateWorkout = async (token, workout_id, notes, date, completed_at) => {
     const response = await fetch(`${API_URL}/workouts/${workout_id}`, {
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ notes, date })
+        body: JSON.stringify({ notes, date,completed_at })
     });
     const workoutData = await response.json();
 
