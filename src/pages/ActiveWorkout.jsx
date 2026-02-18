@@ -422,7 +422,7 @@ function ActiveWorkout() {
             </div>
             {/* Sets display */}
             {/* Exercise Cards */}
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-4 pb-32">
                 {pendingExercises.map(exercise => (
                     <div key={exercise.id} className="relative border border-red-600 rounded-xl p-4 pt-6">
                         {/* Title bar - overlaps the top border */}
