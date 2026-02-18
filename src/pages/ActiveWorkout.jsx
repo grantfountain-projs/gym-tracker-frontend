@@ -41,7 +41,7 @@ function ActiveWorkout() {
 
     // This hook gets the workout ID from the URL
     const { id } = useParams();
-    const { user, token } = useAuth();
+    const { token } = useAuth();
     const navigate = useNavigate(); 
     const muscleGroups = ['Chest', 'Back', 'Legs', 'Shoulders', 'Biceps', 'Triceps', 'Core', 'Forearms', 'Cardio', 'Full Body'];
     
@@ -64,7 +64,7 @@ function ActiveWorkout() {
         };
         
         fetchData();
-    }, []);
+    }, [id, token]);
 
     useEffect(() => {
         if (!workout || workout.completed_at) return;  // Add completed_at check
