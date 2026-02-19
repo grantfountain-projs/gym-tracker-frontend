@@ -10,22 +10,24 @@ import Exercises from './pages/Exercises';
 import Stats from './pages/Stats';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import PublicRoute from './components/PublicRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/active-workout/:id" element={<ActiveWorkout />} />
-          <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
-          <Route path="/history" element={<Layout><History /></Layout>} />
-          <Route path="/exercises" element={<Layout><Exercises /></Layout>} />
-          <Route path="/stats" element={<Layout><Stats /></Layout>} />
-          <Route path="/profile" element={<Layout><Profile /></Layout>} />
-          <Route path="/settings" element={<Layout><Settings /></Layout>} />
+          <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
+          <Route path="/history" element={<ProtectedRoute><Layout><History /></Layout></ProtectedRoute>} />
+          <Route path="/exercises" element={<ProtectedRoute><Layout><Exercises /></Layout></ProtectedRoute>} />
+          <Route path="/stats" element={<ProtectedRoute><Layout><Stats /></Layout></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Layout><Profile /></Layout></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
+          <Route path="/active-workout/:id" element={<ProtectedRoute><ActiveWorkout /></ProtectedRoute>} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

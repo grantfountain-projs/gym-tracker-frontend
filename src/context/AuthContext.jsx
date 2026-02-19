@@ -1,4 +1,4 @@
-import { createContext, useContext, useState} from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { login as apiLogin, register as apiRegister } from '../api/auth';
 /* eslint-disable react-refresh/only-export-components */
 
@@ -33,6 +33,24 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
     };
+
+    useEffect(() => {
+        const validateToken = async () => {
+            if (!token) return;
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (!res.ok) {
+                    // Token is expired or invalid
+                    logout();
+                }
+            } catch {
+                logout();
+            }
+        };
+        validateToken();
+    }, [token]); // runs once on app load
 
     const value = {
         user,
