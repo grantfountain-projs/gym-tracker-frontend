@@ -164,11 +164,19 @@ function ActiveWorkout() {
         }
     };
 
-    const handleDeleteExercise = (exerciseId) => {
-        setPendingExercises(pendingExercises.filter(e => e.id !== exerciseId));
-        setSets(sets.filter(s => s.exercise_id !== exerciseId));
+    const handleDeleteExercise = async (exerciseId) => {
+        try {
+            // Delete all sets for this exercise from DB
+            const exerciseSets = sets.filter(s => s.exercise_id === exerciseId);
+            await Promise.all(exerciseSets.map(s => deleteSet(token, s.id)));
+            
+            // Then clear from state
+            setPendingExercises(pendingExercises.filter(e => e.id !== exerciseId));
+            setSets(sets.filter(s => s.exercise_id !== exerciseId));
+        } catch (error) {
+            console.error(error);
+        }
     };
-
     const handleDeleteSet = async (setId, exerciseId) => {
         try {
             await deleteSet(token, setId);
