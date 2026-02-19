@@ -51,3 +51,20 @@ export const updateWorkout = async (token, workout_id, notes, date, completed_at
 
     return workoutData;
 };
+
+export const getWorkoutStats = async (token) => {
+    const response = await fetch(`${API_URL}/workouts/stats`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to get workout stats');
+    }
+
+    return data;
+};
