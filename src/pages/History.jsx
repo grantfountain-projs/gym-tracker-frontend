@@ -29,10 +29,11 @@ const formatDateTime = (isoString) => {
 
 const getWeekKey = (isoString) => {
     const date = new Date(isoString);
-    const day = date.getDay(); // 0 = Sunday
+    const day = date.getDay();
     const monday = new Date(date);
     monday.setDate(date.getDate() - ((day + 6) % 7));
-    return monday.toISOString().split("T")[0]; // "YYYY-MM-DD" of that week's Monday
+    monday.setHours(0, 0, 0, 0);
+    return monday.toLocaleDateString('en-CA'); // "YYYY-MM-DD" in local time
 };
 
 const formatWeekLabel = (weekKey) => {
@@ -166,7 +167,7 @@ export default function History() {
 
     useEffect(() => {
         fetchHistory(token)
-            .then(setHistory)
+            .then(data => setHistory(data.filter(w => w.exercises.length > 0)))
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));
     }, [token]);
