@@ -12,6 +12,7 @@ function ActiveWorkout() {
     const [workout, setWorkout] = useState(null);
     const [sets, setSets] = useState([]);           // grows as user adds sets
     const [exercises, setExercises] = useState([]); // loaded from API
+    const [timerRunning, setTimerRunning] = useState(false);
     const [elapsedTime, setElapsedTime] = useState(0); // updates every second
     const [loading, setLoading] = useState(true);
     const [isEditingName, setIsEditingName] = useState(false);
@@ -67,16 +68,12 @@ function ActiveWorkout() {
     }, [id, token]);
 
     useEffect(() => {
-        if (!workout || workout.completed_at) return;  // Add completed_at check
-        
+        if (!timerRunning) return;
         const interval = setInterval(() => {
-            const currentTime = new Date();
-            const initialWorkoutTime = new Date(workout.created_at);
-            setElapsedTime(currentTime - initialWorkoutTime);
+            setElapsedTime(prev => prev + 1000);
         }, 1000);
-        
         return () => clearInterval(interval);
-    }, [workout]);
+    }, [timerRunning]);
 
     const totalVolume = sets.reduce((sum, set) => sum + (set.reps * set.weight), 0);
     const formatTime = (ms) => {
@@ -290,10 +287,27 @@ function ActiveWorkout() {
             </div>
             
             {/* Bottom row: Time and Volume */}
-            <div className="flex justify-around gap-6">
+            <div className="flex justify-around gap-6 items-center">
                 <div className="text-center">
                     <p className="text-gray-400 text-sm">Time</p>
                     <p className="text-2xl font-semibold">{formatTime(elapsedTime)}</p>
+                </div>
+                <div className="flex gap-2">
+                    {!timerRunning ? (
+                        <button
+                            onClick={() => setTimerRunning(true)}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg"
+                        >
+                            Start
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setTimerRunning(false)}
+                            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm font-semibold rounded-lg"
+                        >
+                            Pause
+                        </button>
+                    )}
                 </div>
                 <div className="text-center">
                     <p className="text-gray-400 text-sm">Volume</p>
@@ -419,12 +433,11 @@ function ActiveWorkout() {
             {/* Exercise Cards */}
             <div className="p-4 space-y-4 pb-32">
                 {pendingExercises.map(exercise => (
-                    <div key={exercise.id} className="relative border border-red-600 rounded-xl p-4 pt-6">
+                    <div key={exercise.id} className="relative border border-red-600 rounded-xl p-4 pt-8">
                         {/* Title bar - overlaps the top border */}
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-black px-3 whitespace-nowrap">
-                            <span className="text-white font-bold text-sm">{exercise.name}</span>
-                            <span className="text-gray-500 mx-2">|</span>
-                            <span className="text-gray-400 text-sm">{exercise.muscle_group}</span>
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-black px-3 whitespace-nowrap text-center">
+                            <p className="text-white font-bold text-sm">{exercise.name}</p>
+                            <p className="text-gray-400 text-xs">Muscle Group: {exercise.muscle_group}</p>
                         </div>
 
                         {/* Card content */}
@@ -436,48 +449,60 @@ function ActiveWorkout() {
                                     <div key={set.id} className="flex justify-between items-center px-2 py-1">
                                         {editingSetId === set.id ? (
                                             // Edit form
-                                            <div className="space-y-3 my-2">
-                                                <input
-                                                    type="number"
-                                                    value={editReps}
-                                                    onChange={(e) => setEditReps(e.target.value)}
-                                                    placeholder="Reps"
-                                                    min="0"
-                                                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    value={editWeight}
-                                                    onChange={(e) => setEditWeight(e.target.value)}
-                                                    placeholder="Weight"
-                                                    min="0"
-                                                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                                                />
-                                                <div className="flex justify-between items-center">
-                                                    <p className="text-gray-400 text-sm">RPE</p>
-                                                    <p className="text-white font-semibold">{editRpe}</p>
-                                                </div>
-                                                <input
-                                                    type="range"
-                                                    min="1"
-                                                    max="10"
-                                                    value={editRpe}
-                                                    onChange={(e) => setEditRpe(e.target.value)}
-                                                    className="w-full accent-red-600"
-                                                />
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => setEditingSetId(null)}
-                                                        className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg"
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleSaveSet(set)}
-                                                        className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg"
-                                                    >
-                                                        Save
-                                                    </button>
+                                            <div className="w-full">
+                                                <div className="space-y-3 my-2">
+                                                    <div className="space-y-1">
+                                                        <label className="text-gray-400 text-sm">Reps</label>
+                                                        <input
+                                                            type="number"
+                                                            value={editReps}
+                                                            onChange={(e) => setEditReps(e.target.value)}
+                                                            placeholder="10"
+                                                            min="0"
+                                                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-gray-400 text-sm">Weight (lbs)</label>
+                                                        <input
+                                                            type="number"
+                                                            value={editWeight}
+                                                            onChange={(e) => setEditWeight(e.target.value)}
+                                                            placeholder="135"
+                                                            min="0"
+                                                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <label className="text-gray-400 text-sm">Rate of Perceived Exertion (RPE) 1-10</label>
+                                                        <input
+                                                            type="number"
+                                                            value={editRpe}
+                                                            onChange={(e) => {
+                                                                const val = e.target.value;
+                                                                if (val === '') { setEditRpe(''); return; }
+                                                                const num = parseInt(val);
+                                                                if (!isNaN(num)) setEditRpe(Math.min(10, Math.max(1, num)));
+                                                            }}
+                                                            min="1"
+                                                            max="10"
+                                                            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                                        />
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => setEditingSetId(null)}
+                                                            className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg"
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleSaveSet(set)}
+                                                            className="flex-1 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg"
+                                                        >
+                                                            Save
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         ) : (
@@ -509,34 +534,44 @@ function ActiveWorkout() {
                         {addingSetForExercise === exercise.id ? (
                             // Show the set input form
                             <div className="space-y-3 mt-3">
-                                <input
-                                    type="number"
-                                    value={newReps}
-                                    onChange={(e) => setNewReps(e.target.value)}
-                                    placeholder="Reps"
-                                    min="0"
-                                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                                />
-                                <input
-                                    type="number"
-                                    value={newWeight}
-                                    onChange={(e) => setNewWeight(e.target.value)}
-                                    placeholder="Weight"
-                                    min="0"
-                                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                                />
-                                <div className="flex justify-between items-center">
-                                    <p className="text-gray-400 text-sm">RPE</p>
-                                    <p className="text-white font-semibold">{newRpe}</p>
+                                <div className="space-y-1">
+                                    <label className="text-gray-400 text-sm">Reps</label>
+                                    <input
+                                        type="number"
+                                        value={newReps}
+                                        onChange={(e) => setNewReps(e.target.value)}
+                                        placeholder="10"
+                                        min="0"
+                                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    />
                                 </div>
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="10"
-                                    value={newRpe}
-                                    onChange={(e) => setNewRpe(e.target.value)}
-                                    className="w-full accent-red-600"
-                                />
+                                <div className="space-y-1">
+                                    <label className="text-gray-400 text-sm">Weight (lbs)</label>
+                                    <input
+                                        type="number"
+                                        value={newWeight}
+                                        onChange={(e) => setNewWeight(e.target.value)}
+                                        placeholder="135"
+                                        min="0"
+                                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-gray-400 text-sm">Rate of Perceived Exertion (RPE) 1-10</label>
+                                    <input
+                                        type="number"
+                                        value={newRpe}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val === '') { setNewRpe(''); return; }
+                                            const num = parseInt(val);
+                                            if (!isNaN(num)) setNewRpe(Math.min(10, Math.max(1, num)));
+                                        }}
+                                        min="1"
+                                        max="10"
+                                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    />
+                                </div>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => setAddingSetForExercise(null)}
