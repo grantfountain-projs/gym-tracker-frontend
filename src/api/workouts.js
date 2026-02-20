@@ -3,14 +3,17 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const createWorkout = async (token) => {
+    const now = new Date();
+    const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    
     const response = await fetch(API_URL + '/workouts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' , 'Authorization': `Bearer ${token}`},
-        body: JSON.stringify({ date: new Date().toISOString() })
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ date: localDate })
     });
     const workoutData = await response.json();
 
-    if(!response.ok) {
+    if (!response.ok) {
         throw new Error(workoutData.message || 'Failed to Create Workout');
     }
 
