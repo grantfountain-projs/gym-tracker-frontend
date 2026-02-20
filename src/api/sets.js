@@ -1,6 +1,6 @@
 // src/api/sets.js
 
-const API_URL = 'https://gym-tracker-backend-production-a8e4.up.railway.app/workouts';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const createSet = async (token, workout_id, exercise_id, set_number, reps, weight, rpe) => {
     const response = await fetch(`${API_URL}/${workout_id}/sets`, {

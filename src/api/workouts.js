@@ -1,6 +1,6 @@
 // src/api/workouts.js
 
-const API_URL = 'https://gym-tracker-backend-production-a8e4.up.railway.app';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const createWorkout = async (token) => {
     const response = await fetch(API_URL + '/workouts', {
