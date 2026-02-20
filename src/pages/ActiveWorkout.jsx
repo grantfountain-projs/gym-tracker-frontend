@@ -37,6 +37,8 @@ function ActiveWorkout() {
     const [editReps, setEditReps] = useState('');
     const [editWeight, setEditWeight] = useState('');
     const [editRpe, setEditRpe] = useState(5);
+    const [startTime, setStartTime] = useState(null);
+
 
     const [showSummary, setShowSummary] = useState(false);
 
@@ -57,6 +59,21 @@ function ActiveWorkout() {
                 setExercises(exerciseData.exercises);
                 const setData = await getSetsByWorkoutId(token, id);
                 setSets(setData.sets);
+                // Rebuild pendingExercises from the sets that exist in DB
+                if (setData.sets.length > 0) {
+                    const uniqueExerciseIds = [...new Set(setData.sets.map(s => s.exercise_id))];
+                    const exercisesInWorkout = exerciseData.exercises.filter(e => 
+                        uniqueExerciseIds.includes(e.id)
+                    );
+                    setPendingExercises(exercisesInWorkout);
+                }
+                // Restore timer if workout was in progress
+                const savedStartTime = localStorage.getItem(`workout_start_${id}`);
+                if (savedStartTime) {
+                    setStartTime(parseInt(savedStartTime));
+                    setElapsedTime(Date.now() - parseInt(savedStartTime));
+                    setTimerRunning(true);
+                }
             } catch (error) {
                 console.error(error);
             } finally {
@@ -67,13 +84,20 @@ function ActiveWorkout() {
         fetchData();
     }, [id, token]);
 
+    const handleStart = () => {
+        const now = Date.now() - elapsedTime;
+        setStartTime(now);
+        setTimerRunning(true);
+        localStorage.setItem(`workout_start_${id}`, now);
+    };
+
     useEffect(() => {
         if (!timerRunning) return;
         const interval = setInterval(() => {
-            setElapsedTime(prev => prev + 1000);
+            setElapsedTime(Date.now() - startTime);
         }, 1000);
         return () => clearInterval(interval);
-    }, [timerRunning]);
+    }, [timerRunning, startTime]);
 
     const totalVolume = sets.reduce((sum, set) => sum + (set.reps * set.weight), 0);
     const formatTime = (ms) => {
@@ -209,6 +233,7 @@ function ActiveWorkout() {
             const endedWorkout = await updateWorkout(token, id, workout.notes, workout.date, completedAt);
             setWorkout(endedWorkout.workout);
             setTimerRunning(false);
+            localStorage.removeItem(`workout_start_${id}`);
             setShowSummary(true);
         } catch (error) {
             console.error(error);
@@ -336,7 +361,7 @@ function ActiveWorkout() {
                 <div className="flex gap-2">
                     {!timerRunning ? (
                         <button
-                            onClick={() => setTimerRunning(true)}
+                            onClick={handleStart}
                             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg"
                         >
                             Start
