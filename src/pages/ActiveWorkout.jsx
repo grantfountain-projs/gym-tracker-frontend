@@ -59,6 +59,21 @@ function ActiveWorkout() {
                 setExercises(exerciseData.exercises);
                 const setData = await getSetsByWorkoutId(token, id);
                 setSets(setData.sets);
+                // Rebuild pendingExercises from the sets that exist in DB
+                if (setData.sets.length > 0) {
+                    const uniqueExerciseIds = [...new Set(setData.sets.map(s => s.exercise_id))];
+                    const exercisesInWorkout = exerciseData.exercises.filter(e => 
+                        uniqueExerciseIds.includes(e.id)
+                    );
+                    setPendingExercises(exercisesInWorkout);
+                }
+                // Restore timer if workout was in progress
+                const savedStartTime = localStorage.getItem(`workout_start_${id}`);
+                if (savedStartTime) {
+                    setStartTime(parseInt(savedStartTime));
+                    setElapsedTime(Date.now() - parseInt(savedStartTime));
+                    setTimerRunning(true);
+                }
             } catch (error) {
                 console.error(error);
             } finally {
@@ -70,8 +85,10 @@ function ActiveWorkout() {
     }, [id, token]);
 
     const handleStart = () => {
-        setStartTime(Date.now() - elapsedTime);
+        const now = Date.now() - elapsedTime;
+        setStartTime(now);
         setTimerRunning(true);
+        localStorage.setItem(`workout_start_${id}`, now);
     };
 
     useEffect(() => {
@@ -216,6 +233,7 @@ function ActiveWorkout() {
             const endedWorkout = await updateWorkout(token, id, workout.notes, workout.date, completedAt);
             setWorkout(endedWorkout.workout);
             setTimerRunning(false);
+            localStorage.removeItem(`workout_start_${id}`);
             setShowSummary(true);
         } catch (error) {
             console.error(error);
