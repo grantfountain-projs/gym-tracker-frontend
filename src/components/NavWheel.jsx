@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/5GFLogo.png';
+import { useAuth } from '../context/AuthContext';
 
 const NAV_ITEMS = [
     { label: 'Home', path: '/dashboard', icon: '🏠' },
@@ -9,6 +10,7 @@ const NAV_ITEMS = [
     { label: 'Stats', path: '/stats', icon: '📊' },
     { label: 'Profile', path: '/profile', icon: '👤' },
     { label: 'Settings', path: '/settings', icon: '⚙️' },
+    { label: 'Logout', path: '/logout', icon: '🚪' },
 ];
 
 function NavWheel({ onOpenChange }) {
@@ -21,15 +23,22 @@ function NavWheel({ onOpenChange }) {
         onOpenChange(newState);
     };
 
+    const { logout } = useAuth();
+
     const handleNavigate = (path) => {
         setOpen(false);
         onOpenChange(false);
+        if (path === '/logout') {
+            logout();
+            navigate('/login');
+            return;
+        }
         navigate(path);
     };
 
     const getItemStyle = (index, total) => {
         const angle = (index / (total - 1)) * 180 + 180;
-        const radius = 130;
+        const radius = 160;
         const radian = (angle * Math.PI) / 180;
         const x = Math.cos(radian) * radius;
         const y = Math.sin(radian) * radius;

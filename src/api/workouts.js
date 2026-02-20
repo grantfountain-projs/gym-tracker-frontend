@@ -71,3 +71,17 @@ export const getWorkoutStats = async (token) => {
 
     return data;
 };
+
+export const getWorkoutHistory = async (token) => {
+    const response = await fetch(`${API_URL}/workouts/history`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to Get Workout History');
+    }
+
+    return data;
+};
