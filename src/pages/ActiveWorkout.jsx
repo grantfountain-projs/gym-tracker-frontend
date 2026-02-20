@@ -208,6 +208,7 @@ function ActiveWorkout() {
             const completedAt = new Date().toISOString();
             const endedWorkout = await updateWorkout(token, id, workout.notes, workout.date, completedAt);
             setWorkout(endedWorkout.workout);
+            setTimerRunning(false);
             setShowSummary(true);
         } catch (error) {
             console.error(error);
