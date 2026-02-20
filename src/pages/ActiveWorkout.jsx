@@ -37,6 +37,8 @@ function ActiveWorkout() {
     const [editReps, setEditReps] = useState('');
     const [editWeight, setEditWeight] = useState('');
     const [editRpe, setEditRpe] = useState(5);
+    const [startTime, setStartTime] = useState(null);
+
 
     const [showSummary, setShowSummary] = useState(false);
 
@@ -67,13 +69,18 @@ function ActiveWorkout() {
         fetchData();
     }, [id, token]);
 
+    const handleStart = () => {
+        setStartTime(Date.now() - elapsedTime);
+        setTimerRunning(true);
+    };
+
     useEffect(() => {
         if (!timerRunning) return;
         const interval = setInterval(() => {
-            setElapsedTime(prev => prev + 1000);
+            setElapsedTime(Date.now() - startTime);
         }, 1000);
         return () => clearInterval(interval);
-    }, [timerRunning]);
+    }, [timerRunning, startTime]);
 
     const totalVolume = sets.reduce((sum, set) => sum + (set.reps * set.weight), 0);
     const formatTime = (ms) => {
@@ -336,7 +343,7 @@ function ActiveWorkout() {
                 <div className="flex gap-2">
                     {!timerRunning ? (
                         <button
-                            onClick={() => setTimerRunning(true)}
+                            onClick={handleStart}
                             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg"
                         >
                             Start
