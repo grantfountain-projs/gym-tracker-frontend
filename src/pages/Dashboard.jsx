@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { createWorkout, getWorkoutStats, getWorkoutHistory } from '../api/workouts.js'
+import { createWorkout, getWorkoutStats, getWorkoutHistory, getWorkoutById } from '../api/workouts.js'
 import logo from '../assets/5GFLogo.png';
 
 function Dashboard() {
@@ -23,6 +23,21 @@ function Dashboard() {
         };
         fetchData();
     }, [token]);
+
+    useEffect(() => {
+        const activeWorkoutId = localStorage.getItem('active_workout_id');
+        if (activeWorkoutId) {
+            getWorkoutById(token, activeWorkoutId)
+                .then(data => {
+                    if (!data.workout.completed_at) {
+                        navigate(`/active-workout/${activeWorkoutId}`);
+                    } else {
+                        localStorage.removeItem('active_workout_id');
+                    }
+                })
+                .catch(() => localStorage.removeItem('active_workout_id'));
+        }
+    }, []);
 
     const handleStartWorkout = async () => {
         try {

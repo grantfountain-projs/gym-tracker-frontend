@@ -55,6 +55,7 @@ function ActiveWorkout() {
             try {
                 const workoutData = await getWorkoutById(token, id);
                 setWorkout(workoutData.workout); 
+                localStorage.setItem('active_workout_id', id);
                 const exerciseData = await getAllExercises();
                 setExercises(exerciseData.exercises);
                 const setData = await getSetsByWorkoutId(token, id);
@@ -233,6 +234,7 @@ function ActiveWorkout() {
             const endedWorkout = await updateWorkout(token, id, workout.notes, workout.date, completedAt);
             setWorkout(endedWorkout.workout);
             setTimerRunning(false);
+            localStorage.removeItem('active_workout_id');
             localStorage.removeItem(`workout_start_${id}`);
             setShowSummary(true);
         } catch (error) {
