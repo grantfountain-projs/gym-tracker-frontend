@@ -26,34 +26,27 @@ function Login() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center px-4">
             <div className="w-full max-w-md">
-                {/* Logo */}
                 <div className="flex justify-center mb-8">
-                    <img 
-                        src={logo} 
-                        alt="5G Fitness" 
-                        className="h-36 w-auto"
-                    />
+                    <img src={logo} alt="5G Fitness" className="h-36 w-auto" />
                 </div>
         
-                {/* Login Card */}
                 <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-gray-700/50">
                     <h2 className="text-3xl font-bold text-white mb-2">Welcome back</h2>
                     <p className="text-gray-400 mb-8">Sign in to continue your fitness journey</p>
         
-                    {/* Error message */}
                     {error && (
-                        <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-6">
+                        <div data-testid="error-message" className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-6">
                             {error}
                         </div>
                     )}
         
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        {/* Email input */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Email Address
                             </label>
                             <input
+                                data-testid="email-input"
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -63,13 +56,13 @@ function Login() {
                             />
                         </div>
 
-                        {/* Password input */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                                 Password
                             </label>
                             <div className="relative">
                                 <input
+                                    data-testid="password-input"
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -96,8 +89,8 @@ function Login() {
                             </div>
                         </div>
 
-                        {/* Submit button */}
                         <button
+                            data-testid="login-button"
                             type="submit"
                             className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3.5 rounded-lg transition duration-200 shadow-lg shadow-red-900/30"
                         >
@@ -105,7 +98,6 @@ function Login() {
                         </button>
                     </form>
 
-                    {/* Divider */}
                     <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-700"></div>
@@ -115,8 +107,8 @@ function Login() {
                         </div>
                     </div>
 
-                    {/* Sign up link */}
-                    <Link 
+                    <Link
+                        data-testid="create-account-link"
                         to="/signup"
                         className="block w-full text-center bg-gray-700/50 hover:bg-gray-700 border border-gray-600 text-white font-semibold py-3.5 rounded-lg transition duration-200"
                     >
