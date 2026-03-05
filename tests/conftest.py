@@ -12,7 +12,7 @@ BASE_URL = "http://localhost:5173"
 @pytest.fixture(scope="session")
 def browser():
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, slow_mo=500)
+        browser = p.chromium.launch(headless=False, slow_mo=250)
         yield browser
         browser.close()
 

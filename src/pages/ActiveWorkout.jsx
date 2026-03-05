@@ -280,33 +280,33 @@ function ActiveWorkout() {
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
                 {/* Workout Complete Header */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-red-600 mb-2">Workout Complete!</h1>
-                    <p className="text-2xl text-white font-semibold">{workout?.notes || "Unnamed Workout"}</p>
+                    <h1 data-testid="completed-workout-text" className="text-4xl font-bold text-red-600 mb-2">Workout Complete!</h1>
+                    <p data-testid="completed-workout-name" className="text-2xl text-white font-semibold">{workout?.notes || "Unnamed Workout"}</p>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="w-full max-w-md bg-black rounded-lg border border-red-600 p-6 space-y-4">
-                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                    <div data-testid="completed-workout-duration" className="flex justify-between items-center border-b border-gray-700 pb-3">
                         <span className="text-gray-400">Duration</span>
                         <span className="text-white font-semibold text-xl">{formatTime(elapsedTime)}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                    <div data-testid="completed-workout-volume" className="flex justify-between items-center border-b border-gray-700 pb-3">
                         <span className="text-gray-400">Total Volume</span>
                         <span className="text-white font-semibold text-xl">{totalVolume} lbs</span>
                     </div>
                     
-                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                    <div data-testid="completed-workout-exercises" className="flex justify-between items-center border-b border-gray-700 pb-3">
                         <span className="text-gray-400">Exercises</span>
                         <span className="text-white font-semibold text-xl">{uniqueExercises.length}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center border-b border-gray-700 pb-3">
+                    <div data-testid="completed-workout-total-sets" className="flex justify-between items-center border-b border-gray-700 pb-3">
                         <span className="text-gray-400">Total Sets</span>
                         <span className="text-white font-semibold text-xl">{totalSets}</span>
                     </div>
                     
-                    <div className="flex justify-between items-center">
+                    <div data-testid="completed-workout-muscle-groups" className="flex justify-between items-center">
                         <span className="text-gray-400">Muscle Groups</span>
                         <span className="text-white font-semibold text-xl">{uniqueMuscleGroups.join(', ')}</span>
                     </div>
@@ -442,6 +442,7 @@ function ActiveWorkout() {
                             <>
                                 {/* Search input */}
                                 <input
+                                    data-testid="exercise-search-input"
                                     type="text"
                                     placeholder="Search exercises..."
                                     value={searchInput}
@@ -472,7 +473,7 @@ function ActiveWorkout() {
                                 </div>
 
                                 {/* Exercise list */}
-                                <div className="max-h-64 overflow-y-auto space-y-1">
+                                <div data-testid="exercise-list" className="max-h-64 overflow-y-auto space-y-1">
                                     {filteredExercises.map(exercise => (
                                         <div
                                             key={exercise.id}
@@ -501,7 +502,7 @@ function ActiveWorkout() {
             </div>
             {/* Sets display */}
             {/* Exercise Cards */}
-            <div className="p-4 space-y-4 pb-32">
+            <div data-testid="sets-display" className="p-4 space-y-4 pb-32">
                 {pendingExercises.map(exercise => (
                     <div key={exercise.id} className="relative border border-red-600 rounded-xl p-4 pt-8">
                         <button
@@ -514,8 +515,8 @@ function ActiveWorkout() {
                         </button>
                         {/* Title bar - overlaps the top border */}
                         <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-black px-3 whitespace-nowrap text-center">
-                            <p className="text-white font-bold text-sm">{exercise.name}</p>
-                            <p className="text-gray-400 text-xs">Muscle Group: {exercise.muscle_group}</p>
+                            <p data-testid="exercise-card-exercise-name" className="text-white font-bold text-sm">{exercise.name}</p>
+                            <p data-testid="exercise-card-muscle-group" className="text-gray-400 text-xs">Muscle Group: {exercise.muscle_group}</p>
                         </div>
 
                         {/* Card content */}
@@ -616,9 +617,10 @@ function ActiveWorkout() {
                         {addingSetForExercise === exercise.id ? (
                             // Show the set input form
                             <div className="space-y-3 mt-3">
-                                <div className="space-y-1">
+                                <div data-testid="set-reps" className="space-y-1">
                                     <label className="text-gray-400 text-sm">Reps</label>
                                     <input
+                                        data-testid="set-reps-input"
                                         type="number"
                                         value={newReps}
                                         onChange={(e) => setNewReps(e.target.value)}
@@ -627,9 +629,10 @@ function ActiveWorkout() {
                                         className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                                     />
                                 </div>
-                                <div className="space-y-1">
+                                <div data-testid="set-weight" className="space-y-1">
                                     <label className="text-gray-400 text-sm">Weight (lbs)</label>
                                     <input
+                                        data-testid="set-weight-input"
                                         type="number"
                                         value={newWeight}
                                         onChange={(e) => setNewWeight(e.target.value)}
@@ -638,9 +641,10 @@ function ActiveWorkout() {
                                         className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                                     />
                                 </div>
-                                <div className="space-y-1">
+                                <div data-testid="set-rpe" className="space-y-1">
                                     <label className="text-gray-400 text-sm">Rate of Perceived Exertion (RPE) 1-10</label>
                                     <input
+                                        data-testid="set-rpe-input"
                                         type="number"
                                         value={newRpe}
                                         onChange={(e) => {
