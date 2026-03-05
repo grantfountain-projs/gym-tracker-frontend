@@ -332,6 +332,7 @@ function ActiveWorkout() {
             <div className="flex justify-center items-center mb-4">
                 {isEditingName ? (
                     <input 
+                        data-testid="workout-name-input"
                         type="text"
                         value={workoutName}
                         onChange={(e) => setWorkoutName(e.target.value)}
@@ -346,6 +347,7 @@ function ActiveWorkout() {
                     />
                 ) : (
                     <h1 
+                        data-testid="workout-name"
                         onClick={handleNameClick}
                         className="text-2xl font-bold text-white cursor-pointer hover:text-gray-300"
                     >
@@ -358,7 +360,7 @@ function ActiveWorkout() {
             <div className="flex justify-around gap-6 items-center">
                 <div className="text-center">
                     <p className="text-gray-400 text-sm">Time</p>
-                    <p className="text-2xl font-semibold">{formatTime(elapsedTime)}</p>
+                    <p data-testid="timer-display" className="text-2xl font-semibold">{formatTime(elapsedTime)}</p>
                 </div>
                 <div className="flex gap-2">
                     {!timerRunning ? (
@@ -379,7 +381,7 @@ function ActiveWorkout() {
                 </div>
                 <div className="text-center">
                     <p className="text-gray-400 text-sm">Volume</p>
-                    <p className="text-2xl font-semibold">{totalVolume} lbs</p>
+                    <p data-testid="volume-display" className="text-2xl font-semibold">{totalVolume} lbs</p>
                 </div>
             </div>
             </header>
