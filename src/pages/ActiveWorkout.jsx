@@ -400,8 +400,9 @@ function ActiveWorkout() {
                     <div className="mt-2 bg-gray-800 rounded-lg border border-gray-700 p-4">
                         {showCreateExercise ? (
                             // CREATE FORM
-                            <div className="space-y-3">
+                            <div data-testid="create-exercise-name" className="space-y-3">
                                 <input
+                                    data-testid="create-exercise-name-input"
                                     type="text"
                                     placeholder="Exercise name..."
                                     value={newExerciseName}
@@ -504,8 +505,9 @@ function ActiveWorkout() {
             {/* Exercise Cards */}
             <div data-testid="sets-display" className="p-4 space-y-4 pb-32">
                 {pendingExercises.map(exercise => (
-                    <div key={exercise.id} className="relative border border-red-600 rounded-xl p-4 pt-8">
+                    <div data-testid="exercise-card" key={exercise.id} className="relative border border-red-600 rounded-xl p-4 pt-8">
                         <button
+                            data-testid="delete-exercise-button"
                             onClick={() => handleDeleteExercise(exercise.id)}
                             className="absolute top-2 right-2 text-gray-500 hover:text-red-500 transition-colors"
                         >
@@ -530,9 +532,10 @@ function ActiveWorkout() {
                                             // Edit form
                                             <div className="w-full">
                                                 <div className="space-y-3 my-2">
-                                                    <div className="space-y-1">
+                                                    <div data-testid="edit-set-reps" className="space-y-1">
                                                         <label className="text-gray-400 text-sm">Reps</label>
                                                         <input
+                                                            data-testid="edit-set-reps-input" 
                                                             type="number"
                                                             value={editReps}
                                                             onChange={(e) => setEditReps(e.target.value)}
@@ -541,9 +544,10 @@ function ActiveWorkout() {
                                                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                                                         />
                                                     </div>
-                                                    <div className="space-y-1">
+                                                    <div data-testid="edit-set-weight" className="space-y-1">
                                                         <label className="text-gray-400 text-sm">Weight (lbs)</label>
                                                         <input
+                                                            data-testid="edit-set-weight-input"
                                                             type="number"
                                                             value={editWeight}
                                                             onChange={(e) => setEditWeight(e.target.value)}
@@ -552,9 +556,10 @@ function ActiveWorkout() {
                                                             className="w-full px-4 py-2 bg-gray-700 border border-gray-600 text-white placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
                                                         />
                                                     </div>
-                                                    <div className="space-y-1">
+                                                    <div data-testid="edit-set-rpe" className="space-y-1">
                                                         <label className="text-gray-400 text-sm">Rate of Perceived Exertion (RPE) 1-10</label>
                                                         <input
+                                                            data-testid="edit-set-rpe-input"
                                                             type="number"
                                                             value={editRpe}
                                                             onChange={(e) => {
@@ -586,21 +591,21 @@ function ActiveWorkout() {
                                             </div>
                                         ) : (
                                             // Normal set row
-                                            <div className="grid grid-cols-4 items-center px-2 py-2 gap-2 w-full border-b border-red-600/40">
+                                            <div data-testid="set-row" className="grid grid-cols-4 items-center px-2 py-2 gap-2 w-full border-b border-red-600/40">
                                                 <span className="text-gray-400 text-sm">#{set.set_number}</span>
                                                 <span className="text-white text-sm col-span-2 whitespace-nowrap">{set.weight} lbs x {set.reps} reps</span>
                                                 <div className="flex justify-end gap-2">
-                                                    <button onClick={() => handleDuplicateSet(set)} className="p-1">
+                                                    <button data-testid="duplicate-set-button" onClick={() => handleDuplicateSet(set)} className="p-1">
                                                         <svg className="w-4 h-4 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                                         </svg>
                                                     </button>
-                                                    <button onClick={() => handleEditClick(set)} className="p-1">
+                                                    <button data-testid="edit-set-button" onClick={() => handleEditClick(set)} className="p-1">
                                                         <svg className="w-4 h-4 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                                         </svg>
                                                     </button>
-                                                    <button onClick={() => handleDeleteSet(set.id, set.exercise_id)} className="p-1">
+                                                    <button data-testid="delete-set-button" onClick={() => handleDeleteSet(set.id, set.exercise_id)} className="p-1">
                                                         <svg className="w-4 h-4 text-gray-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                         </svg>

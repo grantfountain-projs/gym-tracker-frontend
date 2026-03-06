@@ -2,6 +2,7 @@ import pytest
 import os
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, expect
+import time
 
 load_dotenv()
 
@@ -28,7 +29,7 @@ def authenticated_page(page):
         "email": TEST_EMAIL,
         "password": TEST_PASSWORD
     })
-    print(response.json())
+    #print(response.json())
     token = response.json()["token"]
     page.goto(f"{BASE_URL}/login")
     page.evaluate(f"localStorage.setItem('token', '{token}')")
@@ -46,3 +47,20 @@ def active_workout_page(authenticated_page):
     workout_id = workout_response.json()["workout"]["id"]
     page.goto(f"{BASE_URL}/active-workout/{workout_id}")
     yield page, workout_id
+
+@pytest.fixture
+def temp_exercise(authenticated_page):
+    page, token = authenticated_page
+    exercise_name = f"Test Exercise {int(time.time())}"
+
+    yield exercise_name
+
+    exercises = page.request.get("http://localhost:3000/exercises").json()["exercises"]
+    exercise = next(e for e in exercises if e["name"] == exercise_name)
+    exercise_id = exercise["id"]
+
+    page.request.delete(
+        f"http://localhost:3000/exercises/{exercise_id}",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+
