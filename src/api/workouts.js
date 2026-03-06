@@ -85,3 +85,12 @@ export const getWorkoutHistory = async (token) => {
 
     return data;
 };
+
+export const getDetailedStats = async (token) => {
+    const response = await fetch(`${API_URL}/workouts/stats/detailed`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to fetch detailed stats');
+    return data;
+};

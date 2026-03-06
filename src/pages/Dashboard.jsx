@@ -16,7 +16,7 @@ function Dashboard() {
                 const statsData = await getWorkoutStats(token);
                 setStats(statsData);
                 const historyData = await getWorkoutHistory(token);
-                setRecentWorkouts(historyData.history.slice(0, 3));
+                setRecentWorkouts(historyData.history.filter(w => w.exercises.length > 0).slice(0, 3));
             } catch (error) {
                 console.error(error);
             }
