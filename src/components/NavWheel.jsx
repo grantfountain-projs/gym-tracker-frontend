@@ -9,7 +9,6 @@ const NAV_ITEMS = [
     { label: 'Exercises', path: '/exercises', icon: '💪' },
     { label: 'Stats', path: '/stats', icon: '📊' },
     { label: 'Profile', path: '/profile', icon: '👤' },
-    { label: 'Settings', path: '/settings', icon: '⚙️' },
     { label: 'Logout', path: '/logout', icon: '🚪' },
 ];
 
@@ -38,7 +37,7 @@ function NavWheel({ onOpenChange }) {
 
     const getItemStyle = (index, total) => {
         const angle = (index / (total - 1)) * 180 + 180;
-        const radius = 160;
+        const radius = 140;
         const radian = (angle * Math.PI) / 180;
         const x = Math.cos(radian) * radius;
         const y = Math.sin(radian) * radius;

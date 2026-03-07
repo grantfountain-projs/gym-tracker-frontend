@@ -39,7 +39,7 @@ function ActiveWorkout() {
     const [editRpe, setEditRpe] = useState(5);
     const [startTime, setStartTime] = useState(null);
 
-
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const [showSummary, setShowSummary] = useState(false);
 
     // This hook gets the workout ID from the URL
@@ -691,9 +691,34 @@ function ActiveWorkout() {
                 ))}
             </div>
             {/* End Workout Button */}
+            {showConfirmation && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+                    <div className="bg-black border border-red-600 rounded-xl p-6 w-full max-w-sm">
+                        <h2 className="text-white text-xl font-bold text-center mb-2">Ready to end your workout?</h2>
+                        <p className="text-gray-400 text-sm text-center mb-6">Your progress will be saved.</p>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => setShowConfirmation(false)}
+                                className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowConfirmation(false);
+                                    handleEndWorkout();
+                                }}
+                                className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold"
+                            >
+                                End Workout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div className="fixed bottom-4 left-4 right-4">
                 <button
-                    onClick={handleEndWorkout}
+                    onClick={() => setShowConfirmation(true)}
                     className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 rounded-lg transition duration-200 border border-gray-600"
                 >
                     End Workout

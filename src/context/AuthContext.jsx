@@ -42,15 +42,19 @@ export const AuthProvider = ({ children }) => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (!res.ok) {
-                    // Token is expired or invalid
+                    // if token is expired or invalid
                     logout();
+                } else {
+                    const data = await res.json();
+                    setUser(data.user);
+                    localStorage.setItem('user', JSON.stringify(data.user));
                 }
             } catch {
                 logout();
             }
         };
         validateToken();
-    }, [token]); // runs once on app load
+    }, [token]); // runs once the app loads
 
     const value = {
         user,
